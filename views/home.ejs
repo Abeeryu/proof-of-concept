@@ -21,15 +21,24 @@
 </section>
 
 
-<section class="weather">
+<section class="forecast">
     <h2>Upcoming 5 days</h2>
     
-  
+    <% forecast.forEach(function(item) { %>
+        <div class="day-info">
+            <span><%= item.date %></span>
+            <span><%= item.icon %></span>
+            <span><%= item.minTemp %> / <%= item.maxTemp %></span>
+            <span><%= item.precipitation %></span>
+            <span><%= item.windDirection %></span>
+        </div>
+    <% }); %>
 </section>
 
-<div class="line"></div>
+
         
 <section class="daily-forecast">
+    <div class="line"></div>
     <h3>Want to get a daily forecast?</h3>
     <form action="/post-subscribe" method="post" class="email-form" name="post-subscribe">
         <input type="email" id="email" name="email" placeholder="Enter your e-mail address" required>
@@ -41,8 +50,15 @@
 </section>
 
 
-
-
+<section class="weather-section">
+    <div class="weather">
+        <div class="temp"><%= weather.temp %></div>
+        <div class="details">
+            <div class="title"><%= weather.title %></div>
+            <div class="description"><%= weather.description %></div>
+        </div>
+    </div>
+</section>
 
 
 

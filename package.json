@@ -15,7 +15,7 @@
     "type": "git",
     "url": "git+https://github.com/fdnd-task/proof-of-concept.git"
   },
-   "keywords": [
+  "keywords": [
     "node",
     "express",
     "ejs"

@@ -23,17 +23,73 @@ app.use(express.urlencoded({extended: true}))
 
 app.use(express.json());
 
+function formatDate(dateString) {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const date = new Date(dateString);
+
+    const dayName = days[date.getDay()];
+    const dayOfMonth = date.getDate();
+    const monthName = months[date.getMonth()];
+
+    const suffix = (dayOfMonth % 10 === 1 && dayOfMonth !== 11)
+        ? 'st'
+        : (dayOfMonth % 10 === 2 && dayOfMonth !== 12)
+            ? 'nd'
+            : (dayOfMonth % 10 === 3 && dayOfMonth !== 13)
+                ? 'rd'
+                : 'th';
+
+    return `${dayName} ${dayOfMonth}${suffix} ${monthName}`;
+}
+
 
 app.get('/', (request, response) => {
-    
-    fetchJson('https://dtnl-frontend-case.vercel.app/api/get-forecast')
-        .then((itemsDataFromAPI) => {
-            response.render('home', { items: itemsDataFromAPI.data});
-        })
-        .catch(error => {
-            console.error("Error fetching data from API:", error);
-            response.status(500).send("Internal Server Error");
+    Promise.all([fetchJson('https://dtnl-frontend-case.vercel.app/api/get-forecast'), fetchJson('https://dtnl-frontend-case.vercel.app/api/get-weather')]).then(([forecastData, weatherData]) => {
+        // Filter forecast data to only get CELCIUS
+        var forecast = forecastData.forecast.filter((forecast) => forecast.metric === "CELCIUS").map((el) => {
+            return {
+                icon: el.condition.icon,
+                date: formatDate(el.date),
+                minTemp: el.minTemp,
+                maxTemp: el.maxTemp,
+                windDirection: el.windDirection,
+                precipitation: el.precipitation,
+            }
         });
+
+        var temp = weatherData.temperature.temp;
+        var title = "";
+        var description = ""
+        if (temp < 0) {
+            title = weatherData.weatherInfo[0].title.replace("{{ CELCIUS }}", temp);
+            description = weatherData.weatherInfo[0].description;
+        } else if (temp >= 1 && temp <= 10) {
+            title = weatherData.weatherInfo[1].title.replace("{{ CELCIUS }}", temp);
+            description = weatherData.weatherInfo[1].description;
+        } else if (temp >= 11 && temp <= 20) {
+            title = weatherData.weatherInfo[2].title.replace("{{ CELCIUS }}", temp);
+            description = weatherData.weatherInfo[2].description;
+        } else if (temp >= 21 && temp <= 30) {
+            title = weatherData.weatherInfo[3].title.replace("{{ CELCIUS }}", temp);
+            description = weatherData.weatherInfo[3].description;
+        } else if (temp >= 31) {
+            title = weatherData.weatherInfo[4].title.replace("{{ CELCIUS }}", temp);
+            description = weatherData.weatherInfo[4].description;
+        }
+
+        var weather = {
+            temp,
+            title,
+            description,
+        }
+
+         response.render('home', { forecast, weather });
+    }).catch(error => {
+        console.error("Error fetching data from API:", error);
+        response.status(500).send("Internal Server Error");
+    });
 });
 
 
@@ -72,39 +128,46 @@ function validateEmail(email) {
 
 
 
-
-
-
-
-// app.get('/get-weather', (request, response) => {
+app.get('/get-weather', (request, response) => {
     
-//     fetchJson('https://dtnl-frontend-case.vercel.app/api/get-weather')
-//         .then((itemsDataFromAPI) => {
-//             response.render('forecast', { items: itemsDataFromAPI.data});
-//         })
-//         .catch(error => {
-//             console.error("Error fetching data from API:", error);
-//             response.status(500).send("Internal Server Error");
-//         });
-// });
+    fetchJson('https://dtnl-frontend-case.vercel.app/api/get-weather')
+        .then((itemsDataFromAPI) => {
+            var temp = itemsDataFromAPI.temperature.temp;
+            var description = "";
+            switch (temp) {
+                case value < 0:
+                    description = itemsDataFromAPI.weatherInfo[0].replace("{{ CELCIUS }}", temp);
+                    break;
+                case value >= 1 <= 10:
+                    description = itemsDataFromAPI.weatherInfo[1].replace("{{ CELCIUS }}", temp);
+                    break;
+                case value >= 11 <= 20:
+                    description = itemsDataFromAPI.weatherInfo[2].replace("{{ CELCIUS }}", temp);
+                    break;
+                case value >= 21 <= 30:
+                    description = itemsDataFromAPI.weatherInfo[3].replace("{{ CELCIUS }}", temp);
+                    break;
+                case value >= 31:
+                    description = itemsDataFromAPI.weatherInfo[4].replace("{{ CELCIUS }}", temp);
+                    break;
+            }
+
+            var results = {
+                temp,
+                description,
+            }
+
+            console.log(results);
+            
+        })
+        .catch(error => {
+            console.error("Error fetching data from API:", error);
+            response.status(500).send("Internal Server Error");
+        });
+});
 
 
 
-
-
-  
-//   // Route to render the EJS template
-//   app.get('/', (req, res) => {
-//     res.render('forecast', { forecast: [] }); // Initial empty forecast
-//   });
-
-
-
-
-
-
-
-// 3. Start de webserver
 
 // Stel het poortnummer in waar express op moet gaan luisteren
 app.set('port', process.env.PORT || 8000)
