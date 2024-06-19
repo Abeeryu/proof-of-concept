@@ -18,7 +18,7 @@
     --primary-font-color: black;
     --secondary-font-color: white;
 
-    --font-size-p: 18px;
+    --font-size-p: 16px;
 
     --padding-bottom: 50px;
 }
@@ -98,11 +98,11 @@ button {
     height: 100%;
     background-color: var(--gray-4);
     font-size: var(--font-size-p);
-    font-weight: 500;
+    font-weight: bold;
     line-height: 28px;
     padding-left: 50px;
     padding-right: 10px;
-    padding-top: 80px;
+    padding-top: 240px;
     padding-bottom: var(--padding-bottom);
     color: var(--primary-font-color);
 }
@@ -140,21 +140,21 @@ button {
     margin-top: 10px;
     padding: 10px;
     border-radius: 5px;
-    display: none; /* Initially hidden */
+    display: none;
 }
 
 #message.success {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
-    display: block; /* Show when the success class is added */
+    display: block;
 }
 
 #message.error {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
-    display: block; /* Show when the error class is added */
+    display: block;
 }
 
 .line {
@@ -169,32 +169,61 @@ button {
 
 .footer {
     width: 100%;
-    height: 200px;
+    height: 300px;
     background-color: var(--footer-color);
     display: flex;
     justify-content: center;
+    align-items: center;
+
+    path {
+        animation: pathAnimation 2s infinite;
+    }
+}
+
+text {
+    animation: textBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes pathAnimation {
+    0%, 100% {
+        fill: white;
+    }
+    50% {
+        fill: #66E5BF;
+    }
+}
+
+@keyframes textBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 /* WEATHER-SECTION */
 
 .weather-section {
     position: absolute;
-    right: 50px;
-    top: 31px; 
+    right: 70px;
+    top: 31px;
     width: 593px;
     height: 215px;
     padding: 20px;
-    background-color: #f9f9f9;
     background-color: var(--rose);
     box-sizing: border-box;
     border-radius: 10px;
-}
+    gap: 0px;
+    opacity: 0px;
 
+}
+    
 .weather {
     display: flex;
     align-items: center;
 }
-
+    
 .temp {
     font-size: 80px;
     font-weight: 500;
@@ -202,14 +231,14 @@ button {
     margin-right: 10px;
     Line-height: 96px;
 }
-
+    
 .details {
     display: flex;
     flex-direction: column;
     padding-left: 25px;
     padding-top: 20px;
 }
-
+    
 .title {
     font-size: 24px;
     font-weight: 500;
@@ -217,11 +246,78 @@ button {
     Line-height: 28px;
     padding-bottom: 20px;
 }
-
+    
 .description {
-    font-size: 18px;
+    font-size: var(--font-size-p);
     font-weight: 300;
     color: #232323;
     Line-height: 30px;
+    opacity: 50%;
 }
+    
+/* THINGS TO DO / THINGS NOT TO DO */
+    
+.things-section {
+    position: absolute;
+    right: 50px;
+    top: 250px;
+    width: 593px;
+    padding: 20px;
+}
+    
+.things {
+    display: flex;
+    flex-direction: column;
+}
+    
+h1.things-title {
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: bold;
+    width: 445px;
+    height: 40px;
+    top: 296px;
+    left: 1026px;
+    gap: 0px;
+    opacity: 0px;
 
+}
+    
+.things-to-do {
+    padding: 10px 0;
+}
+    
+.things-content {
+    display: flex;
+    align-items: center;
+}
+    
+.text-content {
+    margin-left: 20px;
+}
+    
+.title {
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 500;
+    color: var(--footer-color);
+}
+    
+.shortDescription {
+    font-size: var(--font-size-p);
+    color: var(--footer-color);
+    line-height: 30px;
+    font-weight: 300;
+    opacity: 50%;
+}
+    
+.things-img {
+    width: 109px;
+    height: 109px;
+    object-fit: cover;
+}
+    
+.line {
+    border-top: 1px solid #E5E5E5;
+    margin: 5px 0;
+}

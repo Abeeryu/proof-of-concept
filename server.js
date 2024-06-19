@@ -46,7 +46,11 @@ function formatDate(dateString) {
 
 
 app.get('/', (request, response) => {
-    Promise.all([fetchJson('https://dtnl-frontend-case.vercel.app/api/get-forecast'), fetchJson('https://dtnl-frontend-case.vercel.app/api/get-weather')]).then(([forecastData, weatherData]) => {
+    Promise.all([
+        fetchJson('https://dtnl-frontend-case.vercel.app/api/get-forecast'), 
+        fetchJson('https://dtnl-frontend-case.vercel.app/api/get-weather'),
+        fetchJson('https://dtnl-frontend-case.vercel.app/api/get-things-to-do'),
+    ]).then(([forecastData, weatherData, activitiesData]) => {
         // Filter forecast data to only get CELCIUS
         var forecast = forecastData.forecast.filter((forecast) => forecast.metric === "CELCIUS").map((el) => {
             return {
@@ -85,7 +89,37 @@ app.get('/', (request, response) => {
             description,
         }
 
-         response.render('home', { forecast, weather });
+        var todo = []
+        var notToDo = []
+        activitiesData.activities.forEach((activity) => {
+            var result = {
+                id: activity.id,
+                title: activity.title,
+                shortDescription: activity.shortDescription,
+                image: activity.mainImageUrl,
+            };
+
+            if (activity.minTemp && activity.maxTemp) {
+                if (temp >= activity.minTemp && temp <= activity.maxTemp) {
+                    if (todo.length < 3) {
+                        todo.push(result);
+                    }
+                } else {
+                    if (notToDo.length < 3) {
+                        notToDo.push(result);
+                    }
+                }
+            } else {
+                if (notToDo.length < 3) {
+                    notToDo.push(result);
+                }
+            }
+        });
+
+        var activities = { todo, notToDo };
+        console.log(activities)
+
+         response.render('home', { forecast, weather, activities });
     }).catch(error => {
         console.error("Error fetching data from API:", error);
         response.status(500).send("Internal Server Error");
@@ -125,48 +159,6 @@ function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
 }
-
-
-
-app.get('/get-weather', (request, response) => {
-    
-    fetchJson('https://dtnl-frontend-case.vercel.app/api/get-weather')
-        .then((itemsDataFromAPI) => {
-            var temp = itemsDataFromAPI.temperature.temp;
-            var description = "";
-            switch (temp) {
-                case value < 0:
-                    description = itemsDataFromAPI.weatherInfo[0].replace("{{ CELCIUS }}", temp);
-                    break;
-                case value >= 1 <= 10:
-                    description = itemsDataFromAPI.weatherInfo[1].replace("{{ CELCIUS }}", temp);
-                    break;
-                case value >= 11 <= 20:
-                    description = itemsDataFromAPI.weatherInfo[2].replace("{{ CELCIUS }}", temp);
-                    break;
-                case value >= 21 <= 30:
-                    description = itemsDataFromAPI.weatherInfo[3].replace("{{ CELCIUS }}", temp);
-                    break;
-                case value >= 31:
-                    description = itemsDataFromAPI.weatherInfo[4].replace("{{ CELCIUS }}", temp);
-                    break;
-            }
-
-            var results = {
-                temp,
-                description,
-            }
-
-            console.log(results);
-            
-        })
-        .catch(error => {
-            console.error("Error fetching data from API:", error);
-            response.status(500).send("Internal Server Error");
-        });
-});
-
-
 
 
 // Stel het poortnummer in waar express op moet gaan luisteren
