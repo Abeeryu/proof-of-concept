@@ -70,6 +70,14 @@ button {
     padding-bottom: var(--padding-bottom);
 }
 
+button:hover {
+    color: #9D9D9D;
+}
+
+button:active {
+    color: #f4ff80;
+}
+
 /* FORECAST-SECTION */
 
 .forecast {
@@ -215,8 +223,7 @@ text {
     box-sizing: border-box;
     border-radius: 10px;
     gap: 0px;
-    opacity: 0px;
-
+    opacity: 0;
 }
     
 .weather {
