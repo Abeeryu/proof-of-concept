@@ -222,8 +222,6 @@ text {
     background-color: var(--rose);
     box-sizing: border-box;
     border-radius: 10px;
-    gap: 0px;
-    opacity: 0;
 }
     
 .weather {
@@ -292,6 +290,11 @@ h1.things-title {
     
 .things-to-do {
     padding: 10px 0;
+    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.things-to-do:hover {
+    transform: scale(1.05);
 }
     
 .things-content {
